@@ -43,6 +43,7 @@ function setPointer(pos: Pointer) {
 
 const shade_picker = <HTMLCanvasElement>document.getElementById('shade_picker')!;
 const base_color_picker = <HTMLCanvasElement>document.getElementById('base_color_picker')!;
+
 shade_picker.addEventListener('color', (e) => {
     let color = (e as CustomEvent).detail as RGB;
     console.log(color);
@@ -55,4 +56,4 @@ shade_picker.addEventListener('pointer', (e) => {
 }, false);
 
 new ShadePicker(300, 300, shade_picker);
-new BaseColorPicker(400, 40, base_color_picker);
+new BaseColorPicker(300, 20, base_color_picker);
