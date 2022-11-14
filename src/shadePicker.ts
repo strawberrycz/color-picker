@@ -19,9 +19,6 @@ export class ShadePicker {
   render() {
     this.canvas.width = this.canvasWidth;
     this.canvas.height = this.canvasHeight;
-//     this.canvas.innerHTML = `
-//         <div id="pointer" class="pointer">+</div>
-// `
 
     this.fillCanvas();
 
