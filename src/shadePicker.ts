@@ -5,6 +5,7 @@ export class ShadePicker {
   ctx: CanvasRenderingContext2D;
 
   baseColor: string = '#0000ff';
+  pointerPosition: Pointer = new Pointer(0, 0); // TODO - constructor
 
   constructor(canvasWidth: number, canvasHeight: number, canvas: HTMLCanvasElement) {
     this.canvasWidth = canvasWidth;
@@ -13,7 +14,7 @@ export class ShadePicker {
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!;
     if (this.ctx === null) throw new Error('Context identifier not supported');
 
-    this.render();
+    this.render(); // TODO emit actual color after render
   }
 
   render() {
@@ -25,19 +26,25 @@ export class ShadePicker {
     this.canvas.addEventListener('click', (event) => {
       let x = event.offsetX;  // Get X coordinate
       let y = event.offsetY;  // Get Y coordinate
+      this.pointerPosition = new Pointer(x, y);
 
-      let pixel = this.ctx.getImageData(x, y, 1, 1)['data'];   // Read pixel Color
-      let rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`; // TODO: remove
-      console.log('RGB: ', rgb);
-      this.canvas.dispatchEvent(new CustomEvent('color', { detail: new RGB(pixel[0], pixel[1], pixel[2]) }));
-      this.canvas.dispatchEvent(new CustomEvent('pointer', { detail: new Pointer(x, y) }))
-      document.body.style.background = rgb;    // Set this color to body of the document
+      this.canvas.dispatchEvent(new CustomEvent('pointer', { detail: this.pointerPosition }))
+      this.emitActualColor();
     });
   }
 
   setBaseColor(color: RGB) {
     this.baseColor = color.rgbColor;
     this.fillCanvas();
+    this.emitActualColor();
+  }
+
+  emitActualColor() {
+    let pixel = this.ctx.getImageData(this.pointerPosition.x, this.pointerPosition.y, 1, 1)['data'];   // Read pixel Color
+    let rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`; // TODO: remove
+    console.log('RGB: ', rgb);
+    this.canvas.dispatchEvent(new CustomEvent('color', { detail: new RGB(pixel[0], pixel[1], pixel[2]) }));
+    document.body.style.background = rgb;    // Set this color to body of the document
   }
 
   fillCanvas() {
