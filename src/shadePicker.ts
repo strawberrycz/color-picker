@@ -35,8 +35,8 @@ export class ShadePicker {
     });
   }
 
-  setBaseColor(color: string) {
-    this.baseColor = color;
+  setBaseColor(color: RGB) {
+    this.baseColor = color.rgbColor;
     this.fillCanvas();
   }
 
@@ -67,6 +67,10 @@ export class RGB {
     this.r = r;
     this.g = g;
     this.b = b;
+  }
+
+  get rgbColor(): string {
+    return `rgb(${this.r}, ${this.g}, ${this.b})`;
   }
 }
 

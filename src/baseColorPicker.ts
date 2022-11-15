@@ -1,3 +1,4 @@
+import {Pointer, RGB} from "./shadePicker";
 
 export class BaseColorPicker {
     canvasWidth: number;
@@ -27,6 +28,7 @@ export class BaseColorPicker {
             '#f00'  // red (#f00)
         ];
 
+        // render color palette
         for (let i = 0; i < colors.length - 1; i++) {
             let width = this.canvasWidth / (colors.length - 1);
             console.log(colors[i], i, width);
@@ -36,5 +38,16 @@ export class BaseColorPicker {
             this.ctx.fillStyle = gradient;
             this.ctx.fillRect(i*width, 0, width, this.canvasHeight);
         }
+
+        this.canvas.addEventListener('click', (event) => {
+            let x = event.offsetX;  // Get X coordinate
+
+            let pixel = this.ctx.getImageData(x, 1, 1, 1)['data'];   // Read pixel Color
+            let rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`; // TODO: remove
+            console.log('RGB: ', rgb, x);
+            this.canvas.dispatchEvent(new CustomEvent('color', { detail: new RGB(pixel[0], pixel[1], pixel[2]) }));
+            this.canvas.dispatchEvent(new CustomEvent('bar', { detail: new Pointer(x, 1) }))
+            document.body.style.background = rgb;    // Set this color to body of the document
+        });
     }
 }

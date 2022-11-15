@@ -44,19 +44,43 @@ h1 {
   text-align: center;
 }
 
-.shade_picker-container {
-  position: relative;
-  border: 1px solid darkslateblue;
-  width: 300px;
-  height: 300px;
-  display: block;
+.color_picker_top-wrapper {
+  display: flex;
+
+  .shade_picker-container {
+    position: relative;
+    border: 1px solid darkslateblue;
+    display: flex;
+
+    .pointer {
+      position: absolute;
+      font-size: 25px;
+      transform: translate(-50%, -50%);
+      user-select: none;
+    }
+  }
+
+  .inputs_container {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.pointer {
-  position: absolute;
-  font-size: 25px;
-  transform: translate(-50%, -50%);
-  user-select: none;
+.base_color_picker-container {
+  display: flex;
+  position: relative;
+  //border: 1px solid darkslateblue;
+  margin-top: 25px;
+
+  .color_bar {
+    position: absolute;
+    height: 100%;
+    width: 5px;
+    border: 2px solid black;
+    transform: translate(-50%, 0);
+    user-select: none;
+    box-sizing: border-box;
+  }
 }
 
 button {

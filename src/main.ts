@@ -1,4 +1,4 @@
-import './style.css'
+import './style.scss'
 
 import {
     Pointer,
@@ -9,16 +9,22 @@ import {BaseColorPicker} from './baseColorPicker';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <div class="shade_picker-container">
-      <canvas id="shade_picker"></canvas>
-      <div id="pointer" class="pointer">+</div>
+    <div class="color_picker_top-wrapper">
+        <div class="shade_picker-container">
+            <canvas id="shade_picker"></canvas>
+            <div id="pointer" class="pointer">+</div>
+        </div>
+        <div class="inputs_container">
+            <label for="red">RED: </label><input id="red">
+            <label for="green">GREEN: </label><input id="green">
+            <label for="blue">BLUE: </label><input id="blue">
+        </div>
     </div>
-    <div class="inputs_container">
-        <label for="red">RED: </label><input id="red">
-        <label for="green">GREEN: </label><input id="green">
-        <label for="blue">BLUE: </label><input id="blue">
+ 
+    <div class="base_color_picker-container">
+      <canvas id="base_color_picker"></canvas>
+      <div id="color_bar" class="color_bar"></div>
     </div>
-    <canvas id="base_color_picker" style="border:1px solid #1a1a1a"></canvas>
     
   </div>
 `
@@ -41,6 +47,11 @@ function setPointer(pos: Pointer) {
     pointer.style.left = `${pos.x}px`;
 }
 
+function setBar(pos: Pointer) {
+    let pointer = <HTMLElement>document.getElementById('color_bar');
+    pointer.style.left = `${pos.x}px`;
+}
+
 const shade_picker = <HTMLCanvasElement>document.getElementById('shade_picker')!;
 const base_color_picker = <HTMLCanvasElement>document.getElementById('base_color_picker')!;
 
@@ -55,5 +66,15 @@ shade_picker.addEventListener('pointer', (e) => {
     setPointer(position);
 }, false);
 
-new ShadePicker(300, 300, shade_picker);
+base_color_picker.addEventListener('bar', (e) => {
+    let position = (e as CustomEvent).detail as Pointer;
+    setBar(position);
+}, false);
+
+base_color_picker.addEventListener('color', (e) => {
+    let color = (e as CustomEvent).detail as RGB;
+    sh.setBaseColor(color);
+}, false);
+
+const sh = new ShadePicker(300, 300, shade_picker);
 new BaseColorPicker(300, 20, base_color_picker);
