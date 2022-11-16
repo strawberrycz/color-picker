@@ -34,7 +34,7 @@ jobs:
         uses: actions/configure-pages@v2
       - name: Install dependencies
         uses: borales/actions-yarn@v3.0.0
-      - run: yarn
+      - run: yarn install --frozen-lockfile
       - name: Build static page
         uses: borales/actions-yarn@v3.0.0
       - run: yarn build
