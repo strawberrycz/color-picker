@@ -1,11 +1,15 @@
+import {Pointer} from './models/Pointer';
+import {HSV} from './models/HSV';
+import {RGB} from './models/RGB';
+
 export class ShadePicker {
   canvasWidth: number;
   canvasHeight: number;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
-  baseColor: string = '#0000ff';
-  pointerPosition: Pointer = new Pointer(0, 0); // TODO - constructor
+  baseColor: string = '#f00';
+  pointerPosition: Pointer = new Pointer(0, 0);
 
   constructor(canvasWidth: number, canvasHeight: number, canvas: HTMLCanvasElement) {
     this.canvasWidth = canvasWidth;
@@ -14,7 +18,7 @@ export class ShadePicker {
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })!;
     if (this.ctx === null) throw new Error('Context identifier not supported');
 
-    this.render(); // TODO emit actual color after render
+    this.render();
   }
 
   render() {
@@ -24,27 +28,34 @@ export class ShadePicker {
     this.fillCanvas();
 
     this.canvas.addEventListener('click', (event) => {
-      let x = event.offsetX;  // Get X coordinate
-      let y = event.offsetY;  // Get Y coordinate
-      this.pointerPosition = new Pointer(x, y);
+      let x = event.offsetX;
+      let y = event.offsetY;
 
-      this.canvas.dispatchEvent(new CustomEvent('pointer', { detail: this.pointerPosition }))
+      this.setPointerPosition(x, y);
       this.emitActualColor();
     });
   }
 
+  setPointerPosition(x: number, y: number) {
+    this.pointerPosition = new Pointer(x, y);
+    this.canvas.dispatchEvent(new CustomEvent('pointer', { detail: this.pointerPosition }));
+  }
+
+  setPositionFromHSV(hsv: HSV) {
+    const x = hsv.v * this.canvasWidth;
+    const y = this.canvasHeight - (hsv.s * this.canvasHeight);
+
+    this.setPointerPosition(x, y);
+  }
+
   setBaseColor(color: RGB) {
-    this.baseColor = color.rgbColor;
+    this.baseColor = color.rgbToText;
     this.fillCanvas();
-    this.emitActualColor();
   }
 
   emitActualColor() {
     let pixel = this.ctx.getImageData(this.pointerPosition.x, this.pointerPosition.y, 1, 1)['data'];   // Read pixel Color
-    let rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`; // TODO: remove
-    console.log('RGB: ', rgb);
     this.canvas.dispatchEvent(new CustomEvent('color', { detail: new RGB(pixel[0], pixel[1], pixel[2]) }));
-    document.body.style.background = rgb;    // Set this color to body of the document
   }
 
   fillCanvas() {
@@ -62,31 +73,5 @@ export class ShadePicker {
     gradient.addColorStop(1, endColor);
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-  }
-}
-
-export class RGB {
-  r: number;
-  g: number;
-  b: number;
-
-  constructor(r: number, g: number, b: number) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-  }
-
-  get rgbColor(): string {
-    return `rgb(${this.r}, ${this.g}, ${this.b})`;
-  }
-}
-
-export class Pointer {
-  x: number;
-  y: number;
-
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
   }
 }

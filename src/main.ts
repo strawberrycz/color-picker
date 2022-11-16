@@ -1,11 +1,11 @@
 import './style.scss'
 
 import {
-    Pointer,
-    RGB,
     ShadePicker
 } from './shadePicker';
 import {BaseColorPicker} from './baseColorPicker';
+import {Pointer} from './models/Pointer';
+import {RGB} from './models/RGB';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -55,14 +55,18 @@ function setBar(pos: Pointer) {
     pointer.style.left = `${pos.x}px`;
 }
 
+function setActualColor(color: RGB) {
+    actualColor = color;
+    document.body.style.background = color.rgbToText;
+}
+
 const shade_picker = <HTMLCanvasElement>document.getElementById('shade_picker')!;
 const base_color_picker = <HTMLCanvasElement>document.getElementById('base_color_picker')!;
 
 shade_picker.addEventListener('color', (e) => {
     let color = (e as CustomEvent).detail as RGB;
-    console.log(color);
     setColorInputs(color);
-    actualColor = color;
+    setActualColor(color);
 }, false);
 
 shade_picker.addEventListener('pointer', (e) => {
@@ -78,16 +82,15 @@ base_color_picker.addEventListener('bar', (e) => {
 base_color_picker.addEventListener('color', (e) => {
     let color = (e as CustomEvent).detail as RGB;
     sh.setBaseColor(color);
+    sh.emitActualColor();
 }, false);
 
 const sh = new ShadePicker(300, 300, shade_picker);
-new BaseColorPicker(300, 20, base_color_picker);
-
+const bcp = new BaseColorPicker(300, 20, base_color_picker);
 
 let copyToClipboardRef = <HTMLButtonElement>document.getElementById('copy_to_clipboard');
 copyToClipboardRef.addEventListener('click', async () => {
-    console.log(actualColor.rgbColor);
-    await navigator.clipboard.writeText(actualColor.rgbColor);
+    await navigator.clipboard.writeText(actualColor.rgbToText);
     const previousText = copyToClipboardRef.textContent;
     copyToClipboardRef.textContent = 'Copied';
     setTimeout(() => copyToClipboardRef.textContent = previousText, 2000);
@@ -100,5 +103,8 @@ formRef.addEventListener('input', () => {
         Number(formData.get("red")),
         Number(formData.get("green")),
         Number(formData.get("blue")));
-    console.log(color);
+    bcp.barPositionFromHSL(color.HSV);
+    sh.setPositionFromHSV(color.HSV);
+    sh.setBaseColor(color);
+    setActualColor(color);
 }, false);
