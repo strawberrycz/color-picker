@@ -26,6 +26,18 @@ export class BaseColorPicker { // TODO parent class picker
             '#f00'  // red (#f00)
         ];
 
+        // var ctx = canvas.getContext("2d");
+        // var gradient = ctx.createLinearGradient(10, 0, 500, 0);
+        // gradient.addColorStop(0, 'red');
+        // gradient.addColorStop(1 / 6, 'orange');
+        // gradient.addColorStop(2 / 6, 'yellow');
+        // gradient.addColorStop(3 / 6, 'green');
+        // gradient.addColorStop(4 / 6, 'blue');
+        // gradient.addColorStop(5 / 6, 'indigo');
+        // gradient.addColorStop(1, 'violet');
+        // ctx.fillStyle = gradient;
+        // ctx.fillRect(0, 0, 500, 75);
+
         // render color palette
         for (let i = 0; i < colors.length - 1; i++) {
             let width = this.canvasWidth / (colors.length - 1);
